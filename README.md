@@ -1,7 +1,7 @@
 # Chrome-Extension-with-RESTful-API
 A calculator chrome extension, which works with a RESTful api for realtime calculations
 
-
+<img src="https://cdn-images-1.medium.com/max/1600/1*y7E7QrDVz6zUlZHW0QzYeA.png" />
 It uses a restful api providing following services:
 
 1.  Calculate/calc_string = "expression to evaluate"
