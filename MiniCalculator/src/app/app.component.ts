@@ -2,7 +2,8 @@ import { Component } from '@angular/core';
 import {Http, Response} from '@angular/http';
 import 'rxjs/add/operator/map';
 import Stack from 'ts-data.stack';
-
+import {HostListener} from '@angular/core';
+declare var Materialize:any;
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
@@ -12,6 +13,8 @@ export class AppComponent {
   value = '0';
   result = '0';
   stack;
+
+
   private url = 'https://calcapiajaythorve.herokuapp.com/calculate';
 
   constructor(private http: Http){
@@ -25,9 +28,35 @@ export class AppComponent {
       if(temp_val === '('){
         this.stack.push('(');
       }else if(temp_val === ')'){
-        this.stack.pop();
+        if(this.stack.isEmpty()){
+          Materialize.toast('Imbalanced paranthesis', 2000);
+          return;
+        }else{
+          this.stack.pop();
+          this.value = this.value + '' + temp_val;
+          this.calc();
+          return;
+        }
       }
+      let regex=new RegExp("[+-//*]");
+      const last_char = this.value.charAt(this.value.length-1);
 
+    if(temp_val=='/' && regex.test(last_char)){
+        Materialize.toast('Invalid entry', 2000);
+        return;
+      }
+      if(temp_val=='+' && regex.test(last_char)){
+        Materialize.toast('Invalid entry', 2000);
+        return;
+      }
+      if(temp_val=='-' && regex.test(last_char)){
+        Materialize.toast('Invalid entry', 2000);
+        return;
+      }
+      if(temp_val=='*' && regex.test(last_char)){
+        Materialize.toast('Invalid entry', 2000);
+        return;
+      }
       if (this.value === '0') {
         if(temp_val.toString().indexOf('^')>=0){
           this.result = 'enter a value to raise to';
@@ -45,6 +74,23 @@ export class AppComponent {
       if ((this.isNum(temp_val) || this.value.toString().substr(this.value.length-2,2)==='^2') && this.isBalancedParanthesis()) {
         this.calc();
       }
+  }
+
+  @HostListener('window:keydown', ['$event'])keyboardInput(event: KeyboardEvent) {
+
+    const temp_val = event.key;
+    //console.log(temp_val);
+    if(this.isNum(temp_val) || temp_val=='('
+      || temp_val==')' || temp_val=='+' || temp_val=='-'
+      || temp_val=='/' || temp_val=='*' || temp_val=='^' || temp_val == '.'){
+      this.val(temp_val);
+    }else if(temp_val == 'Enter'){
+      this.calc();
+    }else if(temp_val == "Backspace"){
+      this.clearone();
+    }else if(temp_val == " "){
+      return;
+    }
   }
 
   isBalancedParanthesis(){
@@ -87,7 +133,7 @@ export class AppComponent {
   }
 
   round(){
-    let l = '/round?calc_string='+encodeURIComponent(this.value);
+    let l = '/round?calc_string='+encodeURIComponent(this.result);
     this.http.get(this.url+ l)
       .map(res => res.json())
       .subscribe(data => {
@@ -127,9 +173,14 @@ export class AppComponent {
   }
 
   clearone(){
-    if(this.value.length>0 && this.value!='0'){
+    if(this.value.length>1 && this.value!='0'){
       this.value = this.value.substring(0,this.value.length-1);
+      this.calc();
+    }else if(this.value.length==1 && this.value!='0'){
+      this.value = '0';
       this.calc();
     }
   }
+
+
 }
