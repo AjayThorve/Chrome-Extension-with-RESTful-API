@@ -1,6 +1,8 @@
 # Chrome-Extension-with-RESTful-API
 A calculator chrome extension, which works with a RESTful api for realtime calculations
 
+<a href="https://chrome.google.com/webstore/detail/minicalculator/ncdkfjceckkljeilnpfbdoifggpbpfek?authuser=1">Download here</a>
+<br><br>
 <img src="https://cdn-images-1.medium.com/max/1600/1*y7E7QrDVz6zUlZHW0QzYeA.png" />
 It uses a restful api providing following services:
 
